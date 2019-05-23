@@ -8,10 +8,66 @@ output: html_document
 ```{r setup, include=FALSE}
 library('tidyverse')
 telcom = read_csv('https://s3.amazonaws.com/foco-ds-portal-files/WA_Fn-UseC_-Telco-Customer-Churn.csv')
+dat = telcom
 ```
 
 Begin your analysis here!
 ```{r}
+summary(dat)
 
+```
+Here is how to filter by NA
+
+```{r}
+dat %>% filter(is.na(TotalCharges))
+```
+
+Here is how to delete the NA (notice the !is)
+```{r}
+dat = dat %>% filter(!is.na(TotalCharges))
+```
+
+Here is how to find unique data
+
+```{r}
+dat %>%
+  select(Churn) %>%
+  unique()
+```
+
+Standard practice is that it should be 
+Control + Shift + m = %>% 
+
+```{r}
+dat %>%
+  group_by(Churn) %>%
+  summarize(ChurnCount = n())
+```
+Here is how we do percentages
+
+```{r}
+dat %>%
+  group_by(Churn) %>%
+  summarize(n = n()) %>%
+  mutate(n_pct = n / sum(n) * 100)
+```
+This is just a style version... however it changes the percent to a character instead of a normal
+```{r}
+dat %>%
+  group_by(Churn) %>%
+  summarize(n = n()) %>%
+  mutate(n_pct = scales::percent(n / sum(n)))
+```
+
+```{r}
+dat %>% 
+  mutate()
+  ggplot(aes(y = MonthlyCharges, x = Churn))+
+  geom_bar( stat = 'identity')
+```
+```{r}
+dat %>%
+  mutate(monthly_Charges_Diff = MonthlyCharges - TotalCharges) %>%
+  filter(monthly_Charges_Diff == 0)
 ```
 
